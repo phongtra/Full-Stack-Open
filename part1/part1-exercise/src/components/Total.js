@@ -1,12 +1,9 @@
 import React from 'react';
 
 const Total = ({ total }) => {
-  return (
-    <p>
-      Number of exercises{' '}
-      {total[0].exercises + total[1].exercises + total[2].exercises}
-    </p>
-  );
+  let sum = 0;
+  total.forEach(el => (sum += el.exercises));
+  return <p>Number of exercises {sum}</p>;
 };
 
 export default Total;
