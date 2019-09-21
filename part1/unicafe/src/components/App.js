@@ -25,8 +25,8 @@ const App = () => {
         <Statistics text={'good'} value={good} />
         <Statistics text={'neutral'} value={neutral} />
         <Statistics text={'bad'} value={bad} />
-        <Statistics text={'average'} value={renderAverage()} />
-        <Statistics text={'percentage'} value={renderPercentage()} />
+        <Statistics text={'average'} value={renderAverage().toFixed(1)} />
+        <Statistics text={'percentage'} value={renderPercentage().toFixed(1)} />
       </div>
     );
   };
