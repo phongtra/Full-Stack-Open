@@ -3,18 +3,23 @@ import Content from './Content';
 
 const Header = ({ course }) => <h1>{course}</h1>;
 
-// const Total = ({parts}) => {
-//   const total =
-
-//   return <p>yhteensä {total} tehtävää</p>;
-// };
+const Total = ({ parts }) => {
+  const total = parts.reduce((a, b) => {
+    return a + b.exercises;
+  }, 0);
+  return (
+    <p>
+      <b>total of {total} exercises</b>
+    </p>
+  );
+};
 
 const Course = ({ course }) => {
   return (
     <div>
       <Header course={course.name} />
       <Content parts={course.parts} />
-      {/* <Total parts={course.parts} /> */}
+      <Total parts={course.parts} />
     </div>
   );
 };
