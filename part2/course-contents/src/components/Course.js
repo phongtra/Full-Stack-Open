@@ -1,7 +1,7 @@
 import React from 'react';
 import Content from './Content';
 
-const Header = ({ course }) => <h1>{course}</h1>;
+const Header = ({ course }) => <h2>{course}</h2>;
 
 const Total = ({ parts }) => {
   const total = parts.reduce((a, b) => {
