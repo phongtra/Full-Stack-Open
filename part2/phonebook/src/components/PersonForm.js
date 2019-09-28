@@ -20,8 +20,7 @@ const PersonForm = ({
           if (existingNumber) {
             return alert(`${newName} has already been added to phone book`);
           }
-          setPersons(persons.concat({ name: newName, number: newNumber }));
-          // console.log(persons);
+
           await axios.post('http://localhost:3001/persons', {
             name: newName,
             number: newNumber

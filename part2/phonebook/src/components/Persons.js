@@ -7,7 +7,7 @@ const Persons = ({ renderFilter }) => {
     <>
       <ul>
         {renderFilter().map(result => {
-          return <Person key={result.id | result.name} result={result} />;
+          return <Person key={result.id} result={result} />;
         })}
       </ul>
     </>
