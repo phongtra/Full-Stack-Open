@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 
 const PersonForm = ({
   persons,
@@ -6,20 +7,28 @@ const PersonForm = ({
   newName,
   setNewName,
   newNumber,
-  setNewNumber
+  setNewNumber,
+  submit,
+  setSubmit
 }) => {
   return (
     <>
       <form
-        onSubmit={e => {
+        onSubmit={async e => {
           e.preventDefault();
           let existingNumber = persons.find(person => person.name === newName);
           if (existingNumber) {
             return alert(`${newName} has already been added to phone book`);
           }
           setPersons(persons.concat({ name: newName, number: newNumber }));
+          // console.log(persons);
+          await axios.post('http://localhost:3001/persons', {
+            name: newName,
+            number: newNumber
+          });
           setNewName('');
           setNewNumber('');
+          setSubmit(!submit);
         }}
       >
         <div>
