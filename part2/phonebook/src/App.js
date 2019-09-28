@@ -10,7 +10,12 @@ const App = () => {
       <form
         onSubmit={e => {
           e.preventDefault();
+          let existingNumber = persons.find(person => person.name === newName);
+          if (existingNumber) {
+            return alert(`${newName} has already been added to phone book`);
+          }
           setPersons(persons.concat({ name: newName }));
+          setNewName('');
         }}
       >
         <div>
