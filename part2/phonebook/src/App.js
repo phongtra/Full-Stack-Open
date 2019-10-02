@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import request from './components/utils/requests';
 
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
 
 const App = () => {
-  const [persons, setPersons] = useState([]);
+  const [people, setPeople] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
@@ -14,18 +14,43 @@ const App = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await axios.get('http://localhost:3001/persons');
-      console.log(res.data);
-      setPersons(res.data);
+      const peopleRes = await request.getAll();
+      setPeople(peopleRes);
     };
     fetchData();
   }, [submit]);
+  const onSubmit = async e => {
+    e.preventDefault();
+    let existingNumber = people.find(person => person.name === newName);
+    if (existingNumber) {
+      const confirm = window.confirm(
+        `${newName} has already been added to the phonebook, replace the old number with new one?`
+      );
+      if (confirm) {
+        const newUser = await request.update(existingNumber.id, {
+          ...existingNumber,
+          number: newNumber
+        });
 
+        return setPeople(
+          people.map(person =>
+            person.id !== existingNumber.id ? person : newUser
+          )
+        );
+      } else {
+        return;
+      }
+    }
+    await request.create({ name: newName, number: newNumber });
+    setNewName('');
+    setNewNumber('');
+    setSubmit(!submit);
+  };
   const renderFilter = () => {
     if (!filter) {
-      return persons;
+      return people;
     }
-    return persons.filter(person => person.name.indexOf(filter) > -1);
+    return people.filter(person => person.name.indexOf(filter) > -1);
   };
   return (
     <div>
@@ -33,17 +58,19 @@ const App = () => {
       <Filter filter={filter} setFilter={setFilter} />
       <h3>Add a new</h3>
       <PersonForm
-        persons={persons}
-        setPersons={setPersons}
+        onSubmit={onSubmit}
         newName={newName}
         setNewName={setNewName}
         newNumber={newNumber}
         setNewNumber={setNewNumber}
-        submit={submit}
-        setSubmit={setSubmit}
       />
       <h2>Numbers</h2>
-      <Persons renderFilter={renderFilter} />
+      <Persons
+        renderFilter={renderFilter}
+        remove={request.remove}
+        setPeople={setPeople}
+        people={people}
+      />
     </div>
   );
 };
