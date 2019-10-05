@@ -4,6 +4,8 @@ import request from './components/utils/requests';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
+import Notification from './components/Notification';
+import Error from './components/Error';
 
 const App = () => {
   const [people, setPeople] = useState([]);
@@ -11,6 +13,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
   const [submit, setSubmit] = useState(false);
+  const [added, setAdded] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,24 +31,36 @@ const App = () => {
         `${newName} has already been added to the phonebook, replace the old number with new one?`
       );
       if (confirm) {
-        const newUser = await request.update(existingNumber.id, {
-          ...existingNumber,
-          number: newNumber
-        });
+        try {
+          const newUser = await request.update(existingNumber.id, {
+            ...existingNumber,
+            number: newNumber
+          });
 
-        return setPeople(
-          people.map(person =>
-            person.id !== existingNumber.id ? person : newUser
-          )
-        );
-      } else {
-        return;
+          return setPeople(
+            people.map(person =>
+              person.id !== existingNumber.id ? person : newUser
+            )
+          );
+        } catch (e) {
+          setErrorMessage(
+            `Information of '${existingNumber.name}' was already removed from server`
+          );
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+          return setSubmit(!submit);
+        }
       }
     }
     await request.create({ name: newName, number: newNumber });
     setNewName('');
     setNewNumber('');
     setSubmit(!submit);
+    setAdded(`Added ${newName} to the phonebook`);
+    return setTimeout(() => {
+      setAdded(null);
+    }, 5000);
   };
   const renderFilter = () => {
     if (!filter) {
@@ -56,6 +72,8 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Filter filter={filter} setFilter={setFilter} />
+      <Notification message={added} />
+      <Error message={errorMessage} />
       <h3>Add a new</h3>
       <PersonForm
         onSubmit={onSubmit}
