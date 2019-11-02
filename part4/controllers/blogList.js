@@ -14,7 +14,7 @@ blogRouters.post('/', async (req, res) => {
   const token = req.token;
 
   if (!title && !url) {
-    return res.status(400).send({ error: 'require url' });
+    return res.status(400).send({ error: 'require url and title' });
   }
   const decodedToken = jwt.verify(token, process.env.SECRET);
   if (!decodedToken.id || !token) {

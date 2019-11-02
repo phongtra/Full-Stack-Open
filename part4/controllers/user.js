@@ -60,6 +60,6 @@ usersRouter.post('/login', async (req, res) => {
 
   const token = jwt.sign(userForToken, process.env.SECRET);
 
-  res.send({ token });
+  res.send({ token, userCredential: user.toJSON() });
 });
 module.exports = usersRouter;
