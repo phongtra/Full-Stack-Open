@@ -16,6 +16,8 @@ const App = () => {
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
   const [notification, setNotification] = useState('');
+
+  const blogFormRef = React.createRef();
   useEffect(() => {
     const fetchBlogs = async () => {
       const blogsData = await blogsService.getAll();
@@ -56,6 +58,8 @@ const App = () => {
   const createBlog = async event => {
     try {
       event.preventDefault();
+      blogFormRef.current.toggleVisibility();
+      blogsService.setToken(user.token);
       const blog = await blogsService.create({ title, author, url });
       setBlogs(blogs.concat(blog));
       setTitle('');
@@ -67,6 +71,50 @@ const App = () => {
       }, 5000);
     } catch (e) {
       setErrorMessage('require url and title');
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    }
+  };
+  const updateBlog = async (updateBlog, id) => {
+    blogsService.setToken(user.token);
+    try {
+      const update = await blogsService.update(updateBlog, id);
+      setBlogs(
+        blogs.map(blog => {
+          if (blog.id === id) {
+            return { ...blog, ...update };
+          }
+          return blog;
+        })
+      );
+      setNotification(`like added`);
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+    } catch (e) {
+      setErrorMessage('cannot add like');
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    }
+  };
+  const deleteBlog = async (id, blog) => {
+    try {
+      blogsService.setToken(user.token);
+      const result = window.confirm(
+        `remove blog ${blog.title} by ${blog.author}`
+      );
+      if (result) {
+        await blogsService.deleteBlog(id);
+        setBlogs(blogs.filter(blog => blog.id !== id));
+        setNotification(`blog removed`);
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
+      }
+    } catch (e) {
+      setErrorMessage('cannot delete blog');
       setTimeout(() => {
         setErrorMessage(null);
       }, 5000);
@@ -96,6 +144,9 @@ const App = () => {
           url={url}
           setUrl={setUrl}
           createBlog={createBlog}
+          blogFormRef={blogFormRef}
+          updateBlog={updateBlog}
+          deleteBlog={deleteBlog}
         />
       )}
     </div>

@@ -2,6 +2,7 @@ import React from 'react';
 
 import Blog from './Blog';
 import BlogForm from './BlogForm';
+import Togglable from './Togglable';
 
 const Blogs = ({
   blogs,
@@ -13,7 +14,10 @@ const Blogs = ({
   setAuthor,
   url,
   setUrl,
-  createBlog
+  createBlog,
+  blogFormRef,
+  updateBlog,
+  deleteBlog
 }) => {
   return (
     <div>
@@ -27,25 +31,35 @@ const Blogs = ({
       >
         logout
       </button>
-      <h2>create</h2>
-      <BlogForm
-        title={title}
-        setTitle={setTitle}
-        author={author}
-        setAuthor={setAuthor}
-        url={url}
-        setUrl={setUrl}
-        createBlog={createBlog}
-      />
-      <ul>
-        {blogs.map(blog => {
-          return (
-            <li key={blog.id}>
-              <Blog blog={blog} />
-            </li>
-          );
-        })}
-      </ul>
+      <Togglable buttonLabel="new note" ref={blogFormRef}>
+        <h2>create</h2>
+        <BlogForm
+          title={title}
+          setTitle={setTitle}
+          author={author}
+          setAuthor={setAuthor}
+          url={url}
+          setUrl={setUrl}
+          createBlog={createBlog}
+        />
+      </Togglable>
+
+      <div>
+        {blogs
+          .sort((a, b) => b.likes - a.likes)
+          .map(blog => {
+            return (
+              <div key={blog.id}>
+                <Blog
+                  blog={blog}
+                  updateBlog={updateBlog}
+                  deleteBlog={deleteBlog}
+                  user={user}
+                />
+              </div>
+            );
+          })}
+      </div>
     </div>
   );
 };
