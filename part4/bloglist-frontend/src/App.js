@@ -5,16 +5,17 @@ import loginService from './services/login';
 
 import LoginForm from './components/LoginForm';
 import Blogs from './components/Blogs';
+import { useField } from './hooks';
 
 const App = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const username = useField('text');
+  const password = useField('password');
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
+  const title = useField('text');
+  const author = useField('text');
+  const url = useField('text');
   const [notification, setNotification] = useState('');
 
   const blogFormRef = React.createRef();
@@ -36,20 +37,22 @@ const App = () => {
     event.preventDefault();
     try {
       const user = await loginService.login({
-        username,
-        password
+        username: username.value,
+        password: password.value
       });
       window.localStorage.setItem('user', JSON.stringify(user));
       blogsService.setToken(user.token);
       setUser(user);
-      setUsername('');
-      setPassword('');
+      username.onChange();
+      password.onChange();
       setNotification(`${user.userCredential.username} has logged in`);
       setTimeout(() => {
         setNotification(null);
       }, 5000);
     } catch (exception) {
       setErrorMessage('Wrong credentials');
+      username.onChange();
+      password.onChange();
       setTimeout(() => {
         setErrorMessage(null);
       }, 5000);
@@ -60,11 +63,15 @@ const App = () => {
       event.preventDefault();
       blogFormRef.current.toggleVisibility();
       blogsService.setToken(user.token);
-      const blog = await blogsService.create({ title, author, url });
+      const blog = await blogsService.create({
+        title: title.value,
+        author: author.value,
+        url: url.value
+      });
       setBlogs(blogs.concat(blog));
-      setTitle('');
-      setAuthor('');
-      setUrl('');
+      title.onChange();
+      author.onChange();
+      url.onChange();
       setNotification(`a new blog ${blog.title} by ${blog.author} added`);
       setTimeout(() => {
         setNotification(null);
@@ -129,8 +136,6 @@ const App = () => {
           username={username}
           password={password}
           handleLogin={handleLogin}
-          setUsername={setUsername}
-          setPassword={setPassword}
         />
       ) : (
         <Blogs
@@ -138,11 +143,8 @@ const App = () => {
           user={user}
           setUser={setUser}
           title={title}
-          setTitle={setTitle}
           author={author}
-          setAuthor={setAuthor}
           url={url}
-          setUrl={setUrl}
           createBlog={createBlog}
           blogFormRef={blogFormRef}
           updateBlog={updateBlog}

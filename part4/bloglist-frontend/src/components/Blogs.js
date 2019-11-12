@@ -20,7 +20,7 @@ const Blogs = ({
   deleteBlog
 }) => {
   return (
-    <div>
+    <div className="blogs-page">
       <h2>Blogs</h2>
       <div>{user.userCredential.username} has logged in</div>
       <button
