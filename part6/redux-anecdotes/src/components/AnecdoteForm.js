@@ -1,19 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { newAnecdote } from '../reducers/anecdoteReducer';
-import {
-  setNotification,
-  removeNotification
-} from '../reducers/notificationReducer';
+import { setNotification } from '../reducers/notificationReducer';
 
-const AnecdoteForm = ({ newAnecdote, setNotification, removeNotification }) => {
+const AnecdoteForm = ({ newAnecdote, setNotification }) => {
   const handleSubmit = e => {
     e.preventDefault();
     const content = e.target.anecdote.value;
     e.target.anecdote.value = '';
     newAnecdote(content);
-    setNotification(`you have created ${content}`);
-    setTimeout(() => removeNotification(), 5000);
+    setNotification(`you have created ${content}`, 5);
+    // setTimeout(() => removeNotification(), 5000);
   };
   return (
     <>
@@ -30,6 +27,5 @@ const AnecdoteForm = ({ newAnecdote, setNotification, removeNotification }) => {
 
 export default connect(null, {
   newAnecdote,
-  setNotification,
-  removeNotification
+  setNotification
 })(AnecdoteForm);
