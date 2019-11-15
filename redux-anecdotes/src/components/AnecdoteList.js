@@ -1,13 +1,22 @@
 import React from 'react';
 import { addVote } from '../reducers/anecdoteReducer';
+import {
+  setNotification,
+  removeNotification
+} from '../reducers/notificationReducer';
 
 const AnecdoteList = ({ store }) => {
-  const anecdotes = []
-    .concat(store.getState())
-    .sort((a, b) => b.votes - a.votes);
+  const anecdotes = [...store.getState().anecdote]
+    .sort((a, b) => b.votes - a.votes)
+    .filter(
+      anecdote =>
+        anecdote.content.toLowerCase().indexOf(store.getState().filter) > -1
+    );
 
-  const vote = id => {
+  const vote = (id, content) => {
     store.dispatch(addVote(id));
+    store.dispatch(setNotification(`you have voted ${content}`));
+    setTimeout(() => store.dispatch(removeNotification()), 5000);
   };
 
   return (
@@ -18,7 +27,9 @@ const AnecdoteList = ({ store }) => {
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id)}>vote</button>
+            <button onClick={() => vote(anecdote.id, anecdote.content)}>
+              vote
+            </button>
           </div>
         </div>
       ))}
