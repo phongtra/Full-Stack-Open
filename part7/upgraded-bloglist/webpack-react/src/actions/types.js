@@ -1,0 +1,10 @@
+export const FETCH_BLOGS = 'fetch_blogs';
+export const CREATE_BLOG = 'create_blog';
+export const SET_NOTIFICATION = 'set_notification';
+export const REMOVE_NOTIFICATION = 'remove_notification';
+export const LOGIN_USER = 'login_user';
+export const SET_ERROR_MESSAGE = 'set_error_message';
+export const REMOVE_ERROR_MESSAGE = 'remove_error_message';
+export const LOGOUT = 'logout';
+export const DELETE_BLOG = 'delete_blog';
+export const UPDATE_BLOG = 'update_blog';
