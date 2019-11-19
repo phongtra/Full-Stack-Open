@@ -1,3 +1,4 @@
+import './LoginForm.css';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -17,20 +18,28 @@ const LoginForm = ({ loginUser }) => {
     passwordReset();
   };
   return (
-    <>
-      <h2>log in to the application</h2>
-      <form className="login" onSubmit={handleLogin}>
-        <div>
-          username
-          <input {...username} name="Username" />
+    <div className="vertical-align">
+      <h2 style={{ textAlign: 'center' }} className="ui green header">
+        log in to the application
+      </h2>
+      <form className="login ui large form" onSubmit={handleLogin}>
+        <div className="two fields">
+          <div className="field">
+            <label>username</label>
+            <input {...username} name="Username" />
+          </div>
+          <div className="field">
+            <label>password</label>
+            <input {...password} name="Password" />
+          </div>
         </div>
-        <div>
-          password
-          <input {...password} name="Password" />
+        <div style={{ textAlign: 'center' }}>
+          <button className="ui blue button" type="submit">
+            login
+          </button>
         </div>
-        <button type="submit">login</button>
       </form>
-    </>
+    </div>
   );
 };
 

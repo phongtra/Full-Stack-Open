@@ -8,3 +8,5 @@ export const REMOVE_ERROR_MESSAGE = 'remove_error_message';
 export const LOGOUT = 'logout';
 export const DELETE_BLOG = 'delete_blog';
 export const UPDATE_BLOG = 'update_blog';
+export const FETCH_USERS = 'fetch_users';
+export const ADD_COMMENT = 'add_comment';

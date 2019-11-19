@@ -77,4 +77,18 @@ blogRouters.put('/:id', async (req, res) => {
     res.status(400).send({ error: e.message });
   }
 });
+blogRouters.post('/:id/comments', async (req, res) => {
+  const id = req.params.id;
+  const token = req.token;
+  const decodedToken = jwt.verify(token, process.env.SECRET);
+  if (!decodedToken.id || !token) {
+    return res.status(401).send({ error: 'invlaid token' });
+  }
+  if (!req.body.comment) {
+    return res.status(400).send({ error: 'must provide comment' });
+  }
+  await Blog.findByIdAndUpdate(id, { $push: { comments: req.body.comment } });
+  const blog = await Blog.findById(id);
+  res.send(blog);
+});
 module.exports = blogRouters;

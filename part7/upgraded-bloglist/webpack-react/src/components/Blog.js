@@ -1,72 +1,49 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import * as actions from '../actions';
 
-const Blog = ({ blog, updateCurrentBlog, deleteCurrentBlog, user }) => {
-  const [expand, setExpand] = useState(false);
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  };
-  const hideWhenExpand = { display: expand ? 'none' : '' };
-  const showWhenExpand = { display: expand ? '' : 'none' };
-  const toggleExpand = () => {
-    setExpand(!expand);
-  };
-  const updateBlog = async (updateBlog, id) => {
-    updateCurrentBlog(updateBlog, id);
-  };
-  const deleteBlog = async (id, blog) => {
+const Blog = ({ blog, deleteCurrentBlog, user }) => {
+  const deleteBlog = (id, blog) => {
     deleteCurrentBlog(id, blog);
   };
+
   const renderRemoveButton = () => {
     if (blog.user && user.userCredential.id) {
       return (
         <div>
           {blog.user.id === user.userCredential.id ? (
-            <button onClick={() => deleteBlog(blog.id, blog)}>remove</button>
+            <button
+              className="ui button basic red"
+              onClick={() => deleteBlog(blog.id, blog)}
+            >
+              remove
+            </button>
           ) : (
-            ''
+            <div>No remove button</div>
           )}
         </div>
       );
     }
   };
+  if (!blog && user) {
+    return <div>...Loading</div>;
+  }
   return (
-    <div className="blog-detail" style={blogStyle} onClick={toggleExpand}>
-      <div style={hideWhenExpand}>
-        {blog.title} {blog.author}
-      </div>
-      <div style={showWhenExpand}>
-        <div>{blog.title}</div>
-        <div>{blog.url}</div>
-        <div>
-          {blog.likes} likes{' '}
-          <button
-            className="like"
-            onClick={() =>
-              updateBlog(
-                {
-                  title: blog.title,
-                  author: blog.author,
-                  url: blog.url,
-                  likes: blog.likes + 1
-                },
-                blog.id
-              )
-            }
-          >
-            like
-          </button>
+    <>
+      <div className="ui fluid card">
+        <div className="content">
+          <Link to={`/users/${user.userCredential.id}`} className="header">
+            {blog.author}
+          </Link>
+          <Link className="description" to={`/blogs/${blog.id}`}>
+            {blog.title}
+          </Link>
         </div>
-        <div>added by {blog.author}</div>
-        {renderRemoveButton()}
+        <div className="extra content">{renderRemoveButton()}</div>
       </div>
-    </div>
+    </>
   );
 };
 

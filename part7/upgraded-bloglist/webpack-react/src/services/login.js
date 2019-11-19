@@ -6,4 +6,9 @@ const login = async credentials => {
   return response.data;
 };
 
-export default { login };
+const getUsers = async () => {
+  const res = await axios.get(`${BACKEND_URL}/api/users`);
+  return res.data;
+};
+
+export default { login, getUsers };

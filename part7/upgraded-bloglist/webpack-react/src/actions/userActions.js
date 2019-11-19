@@ -1,7 +1,7 @@
 import loginService from '../services/login';
 import blogsService from '../services/blogs';
 
-import { LOGIN_USER, LOGOUT } from './types';
+import { LOGIN_USER, LOGOUT, FETCH_USERS } from './types';
 import { setNotification, setErrorMessage } from './notificationActions';
 
 export const loginUser = userCredential => async dispatch => {
@@ -25,4 +25,9 @@ export const checkUser = user => {
 export const logoutUser = () => dispatch => {
   window.localStorage.clear();
   return dispatch({ type: LOGOUT });
+};
+
+export const fetchUsers = () => async dispatch => {
+  const users = await loginService.getUsers();
+  return dispatch({ type: FETCH_USERS, payload: users });
 };

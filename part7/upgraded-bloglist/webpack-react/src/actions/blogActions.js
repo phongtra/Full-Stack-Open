@@ -1,5 +1,11 @@
 import blogsService from '../services/blogs';
-import { FETCH_BLOGS, CREATE_BLOG, UPDATE_BLOG, DELETE_BLOG } from './types';
+import {
+  FETCH_BLOGS,
+  CREATE_BLOG,
+  UPDATE_BLOG,
+  DELETE_BLOG,
+  ADD_COMMENT
+} from './types';
 
 import { setErrorMessage, setNotification } from './notificationActions';
 
@@ -10,7 +16,7 @@ export const fetchBlogs = () => async dispatch => {
 
 export const createNewBlog = newBlog => async (dispatch, getState) => {
   try {
-    blogsService.setToken(getState().user.token);
+    blogsService.setToken(getState().user.currentUser.token);
     const blog = await blogsService.create(newBlog);
     dispatch(
       setNotification(`a new blog ${blog.title} by ${blog.author} added`)
@@ -25,7 +31,7 @@ export const updateCurrentBlog = (updateBlog, id) => async (
   dispatch,
   getState
 ) => {
-  blogsService.setToken(getState().user.token);
+  blogsService.setToken(getState().user.currentUser.token);
   try {
     const update = await blogsService.update(updateBlog, id);
     dispatch(setNotification('like added'));
@@ -37,7 +43,7 @@ export const updateCurrentBlog = (updateBlog, id) => async (
 
 export const deleteCurrentBlog = (id, blog) => async (dispatch, getState) => {
   try {
-    blogsService.setToken(getState().user.token);
+    blogsService.setToken(getState().user.currentUser.token);
     const result = window.confirm(
       `remove blog ${blog.title} by ${blog.author}`
     );
@@ -48,5 +54,16 @@ export const deleteCurrentBlog = (id, blog) => async (dispatch, getState) => {
     }
   } catch (e) {
     return dispatch(setErrorMessage('cannot delete blog'));
+  }
+};
+
+export const addNewComment = (comment, id) => async (dispatch, getState) => {
+  try {
+    blogsService.setToken(getState().user.currentUser.token);
+    const blog = await blogsService.addComment(comment, id);
+    dispatch({ type: ADD_COMMENT, payload: blog });
+    return dispatch(setNotification(`comment added`));
+  } catch (e) {
+    return dispatch(setErrorMessage('cannot add comment'));
   }
 };

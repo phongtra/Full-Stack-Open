@@ -2,11 +2,16 @@ import {
   FETCH_BLOGS,
   CREATE_BLOG,
   UPDATE_BLOG,
-  DELETE_BLOG
+  DELETE_BLOG,
+  ADD_COMMENT
 } from '../actions/types';
 
 export default (state = [], action) => {
   switch (action.type) {
+    case ADD_COMMENT:
+      return state.map(blog =>
+        blog.id === action.payload.id ? action.payload : blog
+      );
     case FETCH_BLOGS:
       return action.payload;
     case CREATE_BLOG:

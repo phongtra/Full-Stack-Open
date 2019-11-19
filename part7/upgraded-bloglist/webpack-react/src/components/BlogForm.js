@@ -21,23 +21,29 @@ const BlogForm = ({ createNewBlog, blogFormRef }) => {
     urlReset();
   };
   return (
-    <>
-      <form onSubmit={createBlog}>
-        <div>
-          title
-          <input {...title} name="Title" />
+    <div>
+      <form className="ui form" onSubmit={createBlog}>
+        <h2 className="ui dividing header">create</h2>
+        <div className="two fields">
+          <div className="field">
+            <label>title</label>
+            <input {...title} name="Title" />
+          </div>
+          <div className="field">
+            <label>author</label>
+            <input {...author} name="Author" />
+          </div>
         </div>
-        <div>
-          author
-          <input {...author} name="Author" />
-        </div>
-        <div>
+        <div className="field">
           url
           <input {...url} name="URL" />
         </div>
-        <button type="submit">submit</button>
+        <button className="ui blue button" type="submit">
+          submit
+        </button>
       </form>
-    </>
+      <br />
+    </div>
   );
 };
 

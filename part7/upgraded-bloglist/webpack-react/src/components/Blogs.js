@@ -7,32 +7,22 @@ import Blog from './Blog';
 import BlogForm from './BlogForm';
 import Togglable from './Togglable';
 
-const Blogs = ({ blogFormRef, logoutUser, user, blogs }) => {
+const Blogs = ({ blogFormRef, user, blogs }) => {
   if (!user) {
     return;
   }
   return (
     <div className="blogs-page">
-      <h2>Blogs</h2>
-      <div>{user.userCredential.username} has logged in</div>
-      <button
-        onClick={() => {
-          logoutUser();
-        }}
-      >
-        logout
-      </button>
       <Togglable buttonLabel="new note" ref={blogFormRef}>
-        <h2>create</h2>
         <BlogForm blogFormRef={blogFormRef} />
       </Togglable>
 
-      <div>
+      <div className="ui three column grid">
         {blogs
           .sort((a, b) => b.likes - a.likes)
           .map(blog => {
             return (
-              <div key={blog.id}>
+              <div className="column" key={blog.id}>
                 <Blog blog={blog} user={user} />
               </div>
             );
@@ -43,7 +33,7 @@ const Blogs = ({ blogFormRef, logoutUser, user, blogs }) => {
 };
 
 const mapStateToProps = state => {
-  return { blogs: state.blogs, user: state.user };
+  return { blogs: state.blogs, user: state.user.currentUser };
 };
 
 export default connect(mapStateToProps, actions)(Blogs);
