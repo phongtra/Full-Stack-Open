@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server');
+const uuid = require('uuid/v1');
 
 let authors = [
   {
@@ -87,41 +88,90 @@ let books = [
 const typeDefs = gql`
   type Author {
     name: String!
-    bookCount: Int!
+    born: Int
+    id: ID!
+    bookCount: Int
   }
   type Book {
     title: String!
     published: Int!
-    author: Author!
+    author: String!
     id: ID!
     genres: [String]
   }
   type Query {
     bookCount: Int!
     authorCount: Int!
-    allBooks(author: String!): [Book!]!
+    allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
+  }
+  type Mutation {
+    addBook(
+      title: String!
+      published: Int!
+      author: String!
+      genres: [String]
+    ): Book
+    editAuthor(name: String!, setBornTo: Int!): Author
   }
 `;
 
 const resolvers = {
   Query: {
     bookCount: () => books.length,
-    authorCount: () => [...new Set(books.map(book => book.author))].length,
+    authorCount: () => authors.length,
     allBooks: (root, args) => {
-      if (!args.author) {
+      if (!(args.genre && args.author)) {
         return books;
       }
-      return books.filter(book => book.author === args.author);
+      if (!args.author && args.genre) {
+        return books.filter(book => {
+          return book.genres.find(genre => args.genre === genre);
+        });
+      }
+      if (!args.genre && args.author) {
+        return books.filter(book => book.author === args.author);
+      }
+      return books.filter(
+        book =>
+          book.author === args.author &&
+          book.genres.find(genre => args.genre === genre)
+      );
     },
     allAuthors: () => {
-      const authors = [...new Set(books.map(book => book.author))];
       const result = [];
       authors.forEach(author => {
-        const bookAuthor = books.filter(book => book.author === author);
-        result.push({ name: author, bookCount: bookAuthor.length });
+        const bookAuthor = books.filter(book => book.author === author.name);
+        result.push({
+          id: author.id,
+          name: author.name,
+          born: author.born,
+          bookCount: bookAuthor.length
+        });
       });
       return result;
+    }
+  },
+  Mutation: {
+    addBook: (root, args) => {
+      const book = { ...args, id: uuid() };
+      console.log(book);
+      books = books.concat(book);
+      const author = authors.find(a => a.name === args.author);
+      if (!author) {
+        authors = authors.concat({ name: args.author, id: uuid() });
+      }
+      return book;
+    },
+    editAuthor: (root, args) => {
+      console.log(args);
+      const author = authors.find(a => a.name === args.name);
+      if (!author) {
+        return null;
+      }
+      const updatedAuthor = { ...author, born: args.setBornTo };
+      authors.map(a => (a.id === updatedAuthor.id ? updatedAuthor : a));
+      return updatedAuthor;
     }
   }
 };
