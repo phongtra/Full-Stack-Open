@@ -171,6 +171,10 @@ const resolvers = {
       }
       const updatedAuthor = { ...author, born: args.setBornTo };
       authors.map(a => (a.id === updatedAuthor.id ? updatedAuthor : a));
+      const bookAuthor = books.filter(
+        book => book.author === updatedAuthor.name
+      );
+      updatedAuthor.bookCount = bookAuthor.length;
       return updatedAuthor;
     }
   }
