@@ -9,6 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "apollo-server": "^2.9.12"
+    "apollo-server": "^2.9.12",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.8.0",
+    "mongoose-unique-validator": "^2.0.3"
   }
 }
