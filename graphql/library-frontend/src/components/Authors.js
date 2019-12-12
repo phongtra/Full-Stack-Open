@@ -29,8 +29,8 @@ const Authors = props => {
             <th>born</th>
             <th>books</th>
           </tr>
-          {props.authors.data.allAuthors.map(a => (
-            <tr key={a.name}>
+          {props.authors.data.allAuthors.map((a, i) => (
+            <tr key={i}>
               <td>{a.name}</td>
               <td>{a.born}</td>
               <td>{a.bookCount}</td>
@@ -38,25 +38,34 @@ const Authors = props => {
           ))}
         </tbody>
       </table>
-      <h2>Set Birthyear</h2>
-      <form onSubmit={submit}>
-        <div>
-          <label>name</label>
-          <select value={author} onChange={e => setAuthor(e.target.value)}>
-            {props.authors.data.allAuthors.map(a => {
-              return <option value={a.name}>{a.name}</option>;
-            })}
-          </select>
-        </div>
-        <div>
-          <label>born</label>
-          <input
-            value={born}
-            onChange={({ target }) => setBorn(target.value)}
-          />
-        </div>
-        <button>update author</button>
-      </form>
+      {props.token ? (
+        <>
+          <h2>Set Birthyear</h2>
+          <form onSubmit={submit}>
+            <div>
+              <label>name</label>
+              <select value={author} onChange={e => setAuthor(e.target.value)}>
+                {props.authors.data.allAuthors.map((a, i) => {
+                  return (
+                    <option key={i} value={a.name}>
+                      {a.name}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+
+            <div>
+              <label>born</label>
+              <input
+                value={born}
+                onChange={({ target }) => setBorn(target.value)}
+              />
+            </div>
+            <button>update author</button>
+          </form>
+        </>
+      ) : null}
     </div>
   );
 };

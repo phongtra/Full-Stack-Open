@@ -6,6 +6,8 @@ const {
 } = require('apollo-server');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
+const { PubSub } = require('apollo-server');
+const pubsub = new PubSub();
 
 mongoose.connect('mongodb://localhost/graphql', { useNewUrlParser: true });
 
@@ -56,6 +58,9 @@ const typeDefs = gql`
     createUser(username: String!, favoriteGenre: String!): User
     login(username: String!, password: String!): Token
   }
+  type Subscription {
+    bookAdded: Book!
+  }
 `;
 
 const resolvers = {
@@ -78,17 +83,7 @@ const resolvers = {
         .find({ author: author._id, genres: { $in: [args.genre] } })
         .populate('author');
     },
-    allAuthors: async () => {
-      const authors = await Author.find({});
-      return authors.map(async author => {
-        const books = await Book.find({});
-        const bookCount = books.filter(
-          book => book.author.toString() === author._id.toString()
-        ).length;
-        author.bookCount = bookCount;
-        return author;
-      });
-    },
+    allAuthors: () => Author.find({}),
     me: (root, args, context) => context.currentUser
   },
   Mutation: {
@@ -106,6 +101,7 @@ const resolvers = {
         });
 
         await book.save();
+        pubsub.publish('BOOK_ADD', { bookAdded: book });
         return book;
       } catch (e) {
         throw new UserInputError(e.message, {
@@ -123,10 +119,6 @@ const resolvers = {
         { born: parseInt(args.setBornTo) }
       );
       const updatedAuthor = await Author.findOne({ name: args.name });
-      const books = await Book.find({});
-      updatedAuthor.bookCount = books.filter(
-        book => book.author.toString() === updatedAuthor._id.toString()
-      ).length;
       return updatedAuthor;
     },
     createUser: async (root, args) => {
@@ -154,6 +146,19 @@ const resolvers = {
       };
       return { value: jwt.sign(userForToken, JWT_SECRET) };
     }
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
+    }
+  },
+  Author: {
+    bookCount: async root => {
+      const books = await Book.find({});
+      return books.filter(book => {
+        return book.author.toString() === root._id.toString();
+      }).length;
+    }
   }
 };
 
@@ -170,6 +175,7 @@ const server = new ApolloServer({
   }
 });
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`);
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`);
 });
