@@ -62,10 +62,7 @@ router.post('/:id/entries', (req, res) => {
         }
         break;
       case 'HealthCheck':
-        if (
-          !req.body.healthCheckRating ||
-          typeof req.body.healthCheckRating !== 'number'
-        ) {
+        if (typeof req.body.healthCheckRating !== 'number') {
           res.status(400).send({
             error: 'Missing parameters or wrong formatted parameters'
           });

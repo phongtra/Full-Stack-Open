@@ -6,7 +6,6 @@ import {
   HospitalEntryForm,
   OccupationalHealthcareEntryForm,
   HealthCheckEntryForm,
-  Entry,
   EntryForm
 } from '../types';
 import { v4 as uuid } from 'uuid';
@@ -32,7 +31,8 @@ const getPatient = (id: string): IPublicPatient => {
   throw new Error('no patient found');
 };
 const addPatient = (patient: IPatientExcludeId): IPatient => {
-  const newPatient = { id: uuid(), ...patient };
+  const newPatient = { id: uuid(), ...patient, entries: [] };
+  patients.push(newPatient);
   return newPatient;
 };
 const entryHelper = (entry: EntryForm, id: string): IPatient => {
