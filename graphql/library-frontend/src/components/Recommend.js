@@ -1,18 +1,14 @@
 import React from 'react';
 
 const Recommend = props => {
-  if (!props.show) {
+  if (!props.show || !props.books.data.allBooks) {
     return null;
   }
-  if (props.books.loading && props.user.loading) {
-    return <div>loading...</div>;
-  }
-  console.log(props.user.data.me.favoriteGenre);
+  const book = props.books.data.allBooks;
+  const genre = props.user.data.me.favoriteGenre;
   return (
     <>
-      {props.books.data.allBooks.filter(book =>
-        book.genres.find(genre => genre === props.user.data.me.favoriteGenre)
-      ).length > 0
+      {book.filter(book => book.genres.includes(genre)).length > 0
         ? props.books.data.allBooks
             .filter(book =>
               book.genres.find(

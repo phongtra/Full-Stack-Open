@@ -103,26 +103,23 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const client = useApolloClient();
 
-  const notify = message => {
-    window.alert(message);
-  };
-  const updateCacheWith = addedBook => {
-    const includedIn = (set, object) => set.map(p => p.id).includes(object.id);
-
-    const dataInStore = client.readQuery({ query: ALL_BOOK });
-    if (!includedIn(dataInStore.allBooks, addedBook)) {
-      dataInStore.allBooks.push(addedBook);
-      client.writeQuery({
-        query: ALL_BOOK,
-        data: dataInStore
-      });
-    }
-  };
   useSubscription(BOOK_ADDED, {
     onSubscriptionData: ({ subscriptionData }) => {
-      const addedBook = subscriptionData.data.bookAdded;
-      notify(`${addedBook.name} added`);
-      updateCacheWith(addedBook);
+      const includedIn = (set, object) =>
+        set.map(p => p.id).includes(object.id);
+
+      const book = subscriptionData.data.bookAdded;
+      alert(`new book by ${book.author.name}: ${book.title}`);
+
+      const dataInStore = client.readQuery({ query: ALL_BOOK });
+
+      if (!includedIn(dataInStore.allBooks, book)) {
+        dataInStore.allBooks.push(book);
+        client.writeQuery({
+          query: ALL_BOOK,
+          data: dataInStore
+        });
+      }
     }
   });
 
@@ -135,10 +132,7 @@ const App = () => {
   });
   const [addBook] = useMutation(ADD_BOOK, {
     onError: handleError,
-    refetchQueries: [{ query: ALL_BOOK }, { query: ALL_AUTHOR }],
-    update: (store, response) => {
-      updateCacheWith(response.data.addBook);
-    }
+    refetchQueries: [{ query: ALL_BOOK }, { query: ALL_AUTHOR }]
   });
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
     onError: handleError
