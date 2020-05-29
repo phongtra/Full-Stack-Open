@@ -1,12 +1,12 @@
-#GraphQL server
+# GraphQL server
 
-##Introduction
+## Introduction
 
 This is a GraphQL server for a set of library
 
 All of the GraphQL code is in index.js
 
-##Important
+##I mportant
 
 To run this project, make sure MongoDB is installed on your machine
 
