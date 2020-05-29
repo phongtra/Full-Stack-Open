@@ -8,7 +8,7 @@ All of the GraphQL code is in index.js
 
 ## Important
 
-To run this project, make sure MongoDB is installed on your machine
+To run this project, make sure MongoDB and nodemon is installed on your machine
 
 ## To run
 
